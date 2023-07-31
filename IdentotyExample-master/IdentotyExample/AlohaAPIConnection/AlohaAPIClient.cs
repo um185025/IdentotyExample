@@ -31,6 +31,14 @@ public class AlohaAPIClient
         return await response.Content.ReadAsStringAsync();
     }
 
+    public async Task<string> PutAsync(string endpoint, string jsonContent)
+    {
+        HttpContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await _httpClient.PutAsync(endpoint, content);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
+
     public async Task<string> GetAsync(string endpoint)
     {
         HttpResponseMessage response = await _httpClient.GetAsync(endpoint);

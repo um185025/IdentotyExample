@@ -1,8 +1,8 @@
-    public class NearbySite
+    public class RootLL
     {
-        public string? id { get; set; }
-        public Site? Site { get; set; }
-        public double? Distance { get; set; }
+        //public string? id { get; set; }
+        public Site Site { get; set; }
+        public decimal Distance { get; set; }
         public bool? InDeliveryZone { get; set; }
         public string? SpecialEventReasons { get; set; }
         public List<Attribute>? Attributes { get; set; }
