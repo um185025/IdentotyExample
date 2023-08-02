@@ -2,6 +2,9 @@ using IdentotyExample.Data;
 using IdentotyExample.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,20 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<DataContext>();
 
+builder.Services.AddHttpClient("AlohaAPIClient", client =>
+{
+    client.BaseAddress = new Uri("https://api.alohaorderonline.com");
+    client.Timeout = TimeSpan.FromSeconds(120);
+    client.DefaultRequestHeaders.Add("X-Api-CompanyCode", "DLEC001");
+    client.DefaultRequestHeaders.Add("PlatformType", "application/json");
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    string username = "api-demo@ds.com";
+    string password = "DigitalNCRDigital123@";
+    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+});
+
+builder.Services.AddSingleton<AlohaAPIClient>();
 
 var app = builder.Build();
 

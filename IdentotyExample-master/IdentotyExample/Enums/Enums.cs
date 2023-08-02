@@ -106,5 +106,23 @@ namespace IdentotyExample.Enums
             Billing = 1,
             NonBilling = 2
         }
+
+        public enum OrderResultCodes
+        {
+            Success = 0,
+            GeneralFailure = 1,
+            SiteCommunicationFailure = 2,
+            ItemFailures = 3,
+            PromiseTimeChanged = 4,
+            OrderMinimumNotMet = 5,
+            FailedToStartOrder = 6,
+            FailedToUpdateOrder = 7,
+            InvalidSiteOrder = 11,
+            SiteNotAcceptingOrders = 12,
+            CapacityExceeded = 13,
+            InvalidPaymentInformation = 14,
+            FailedToSubmitOrder = 15,
+            UnsupportedOrderMode = 16
+        }
     }
 }

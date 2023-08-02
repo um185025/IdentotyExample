@@ -6,7 +6,6 @@ public class Order
         public int SiteId { get; set; }
         public int OrderId { get; set; }
         public int DesignId { get; set; }
-        public int MenuId { get; set; }
         public DateTime PromiseDateTime { get; set; }
         public List<InOrderLineItem> LineItems { get; set; }
         public List<ComboItem> ComboItems { get; set; }
@@ -28,7 +27,7 @@ public class Order
         public string ExternalOrderId { get; set; }
         public bool AssignLoyalty { get; set; }
         public double DeliveryFeeAmount { get; set; }
-        public int QuoteId { get; set; }
+        public int? QuoteId { get; set; }
         public string Channel { get; set; }
         public bool DineIn { get; set; }
         public int TableNumber { get; set; }
