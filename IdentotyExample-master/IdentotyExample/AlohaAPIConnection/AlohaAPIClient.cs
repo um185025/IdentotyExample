@@ -21,7 +21,7 @@ public class AlohaAPIClient : IAlohaAPIClient
     private HttpClient HttpClient { get => _httpClientFactory.CreateClient("AlohaAPIClient"); }
 
 
-    public async Task<string> GetNearbySitesBySearchTerm(string searchTerm, bool? getNearbySitesForFirstGeocodeResult = true, bool? includeAllSites = false, int? offset = 0, int? limit = 5)
+    public async Task<Root> GetNearbySitesBySearchTerm(string searchTerm, bool? getNearbySitesForFirstGeocodeResult = true, bool? includeAllSites = false, int? offset = 0, int? limit = 5)
     {
         string url = $"v1/NearbySites/{searchTerm}?getNearbySitesForFirstGeocodeResult={getNearbySitesForFirstGeocodeResult}&includeAllSites={includeAllSites}&offset={offset}&limit={limit}";
         string endpoint = $"GET {url}";
@@ -30,34 +30,49 @@ public class AlohaAPIClient : IAlohaAPIClient
         using HttpResponseMessage response = await HttpClient.GetAsync(url);
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
-        return serializedJson;
+        Root root = JsonSerializer.Deserialize<Root>(serializedJson);
+        return root;
     }
 
-    public async Task<string> GetNearbySitesByLatitudeAndLongitude(double latitude, double longitude, OrderModeType orderMode = OrderModeType.Pickup, int offset = 0, int limit = 5, bool includeAllSites = false, string companyCode = "DLEC001")
+    public async Task<List<RootLL>> GetNearbySitesByLatitudeAndLongitude(double latitude, double longitude, OrderModeType? orderMode, string? companyCode, int offset = 0, int limit = 5, bool includeAllSites = false)
     {
-        string url = $"v1/NearbySites/{latitude}/{longitude}?orderMode={orderMode}&offset={offset}&limit={limit}&includeAllSites={includeAllSites}&companyCode={companyCode}";
+
+        var urlBuilder = new StringBuilder($"v1/NearbySites/{latitude}/{longitude}?&offset={offset}&limit={limit}&includeAllSites={includeAllSites}");
+        if (orderMode != null)
+            urlBuilder.Append($"&orderMode={orderMode}");
+        if (companyCode != null)
+            urlBuilder.Append($"&companyCode={companyCode}");
+        string url = urlBuilder.ToString();
+
         string endpoint = $"GET {url}";
         _logger.LogInformation(endpoint);
 
         using HttpResponseMessage response = await HttpClient.GetAsync(url);
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
-        return serializedJson;
+        List<RootLL> rootLLs = JsonSerializer.Deserialize<List<RootLL>>(serializedJson);
+        return rootLLs;
     }
 
-    public async Task<string> GetMenus(int siteId, DateTime promiseTime = new DateTime(), bool includeInvisible = false, OrderModeType orderMode = OrderModeType.Pickup)
+    public async Task<RootMenus> GetMenus(int siteId, DateTime? promiseTime, OrderModeType? orderMode, bool includeInvisible = false)
     {
-        string url = $"v1/Menus/{siteId}?promiseTime={promiseTime}&includeInvisible={includeInvisible}&orderMode={orderMode}";
+        var urlBuilder = new StringBuilder($"v1/Menus/{siteId}?includeInvisible={includeInvisible}");
+        if (orderMode != null)
+            urlBuilder.Append($"&orderMode={orderMode}");
+        if (promiseTime != null)
+            urlBuilder.Append($"&promiseTime={promiseTime}");
+        string url = urlBuilder.ToString();
         string endpoint = $"GET {url}";
         _logger.LogInformation(endpoint);
 
         using HttpResponseMessage response = await HttpClient.GetAsync(url);
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
-        return serializedJson;
+        RootMenus rootMenus = JsonSerializer.Deserialize<RootMenus>(serializedJson);
+        return rootMenus;
     }
 
-    public async Task<string> GetTime(int siteId, OrderModeType orderMode, bool noCache = false)
+    public async Task<DateTime> GetTime(int siteId, OrderModeType orderMode, bool noCache = false)
     {
         string url = $"v1/Times/{siteId}/{orderMode}?noCache={noCache}";
         string endpoint = $"GET {url}";
@@ -66,10 +81,11 @@ public class AlohaAPIClient : IAlohaAPIClient
         using HttpResponseMessage response = await HttpClient.GetAsync(url);
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
-        return serializedJson;
+        DateTime.TryParse(serializedJson, out DateTime dateTime);
+        return dateTime;
     }
 
-    public async Task<string> CreateOrder(Order order, int siteId, bool verbose = false)
+    public async Task<RootOrder> CreateOrder(Order order, int siteId, bool verbose = false)
     {
         string url = $"v1/Orders/{siteId}?verbose={verbose}";
         string endpoint = $"PUT {url}";
@@ -80,7 +96,8 @@ public class AlohaAPIClient : IAlohaAPIClient
         var resp = response.Content.ReadAsStringAsync();
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
-        return serializedJson;
+        RootOrder rootOrder = JsonSerializer.Deserialize<RootOrder>(serializedJson);
+        return rootOrder;
     }
 
 

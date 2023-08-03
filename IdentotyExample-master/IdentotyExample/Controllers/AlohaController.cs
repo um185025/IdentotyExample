@@ -23,8 +23,7 @@ namespace IdentotyExample.Controllers
         public async Task<ActionResult> GetNearbySitesBySearchTerm(string searchTerm, bool getNearbySitesForFirstGeocodeResult = true, bool includeAllSites = false, int offset = 0, int limit = 5)
         {
             var response = await _client.GetNearbySitesBySearchTerm(searchTerm, getNearbySitesForFirstGeocodeResult, includeAllSites, offset, limit);
-            Root root = JsonSerializer.Deserialize<Root>(response);
-            return Ok(root);
+            return Ok(response);
         }
 
         [HttpGet]
@@ -32,9 +31,8 @@ namespace IdentotyExample.Controllers
         public async Task<ActionResult> GetFirstNearbySiteBySearchTerm(string searchTerm, bool getNearbySitesForFirstGeocodeResult = true, bool includeAllSites = false, int offset = 0, int limit = 5)
         {
             var response = await _client.GetNearbySitesBySearchTerm(searchTerm, getNearbySitesForFirstGeocodeResult, includeAllSites, offset, limit);
-            Root root = JsonSerializer.Deserialize<Root>(response);
-            if(root.NearbySites != null)
-                return Ok(root.NearbySites[0]);
+            if(response.NearbySites != null)
+                return Ok(response.NearbySites[0]);
             else return NotFound("Nearby sites not found.");
         }
 
@@ -43,9 +41,8 @@ namespace IdentotyExample.Controllers
         public async Task<ActionResult> GetTheRecommendedAddressBySearchTerm(string searchTerm, bool getNearbySitesForFirstGeocodeResult = true, bool includeAllSites = false, int offset = 0, int limit = 5)
         {
             var response = await _client.GetNearbySitesBySearchTerm(searchTerm, getNearbySitesForFirstGeocodeResult, includeAllSites, offset, limit);
-            Root root = JsonSerializer.Deserialize<Root>(response);
-            if (root.NearbySites != null && root.NearbySites.Count >0 && root.NearbySites[0].Site != null)
-                return Ok("Recommended address: "+root.NearbySites[0].Site.AddressLine1);
+            if (response.NearbySites != null && response.NearbySites.Count >0 && response.NearbySites[0].Site != null)
+                return Ok("Recommended address: "+response.NearbySites[0].Site.AddressLine1);
             else return NotFound("Nearby sites not found.");
         }
 
@@ -54,19 +51,17 @@ namespace IdentotyExample.Controllers
         [Route("GetNearbySitesByLongitudeAndLatitude")]
         public async Task<ActionResult> GetNearbySitesByLongitudeAndLatitude(double latitude, double longitude, OrderModeType orderMode = OrderModeType.Pickup, int offset = 0, int limit = 5, bool includeAllSites = false, string companyCode = "DLEC001")
         {
-            var response = await _client.GetNearbySitesByLatitudeAndLongitude(latitude, longitude, orderMode, offset, limit, includeAllSites, companyCode);
-            List<RootLL> root = JsonSerializer.Deserialize<List<RootLL>>(response); 
-            return Ok(root);
+            var response = await _client.GetNearbySitesByLatitudeAndLongitude(latitude, longitude, orderMode, companyCode, offset, limit, includeAllSites);
+            return Ok(response);
         }
 
         [HttpGet]
         [Route("GetFirstNearbySiteByLongitudeAndLatitude")]
         public async Task<ActionResult> GetFirstNearbySiteByLongitudeAndLatitude(double latitude, double longitude, OrderModeType orderMode = OrderModeType.Pickup, int offset = 0, int limit = 5, bool includeAllSites = false, string companyCode = "DLEC001")
         {
-            var response = await _client.GetNearbySitesByLatitudeAndLongitude(latitude, longitude, orderMode, offset, limit, includeAllSites, companyCode);
-            List<RootLL> root = JsonSerializer.Deserialize<List<RootLL>>(response);
-            if (root.Count > 0)
-                return Ok(root[0].Site);
+            var response = await _client.GetNearbySitesByLatitudeAndLongitude(latitude, longitude, orderMode, companyCode, offset, limit, includeAllSites);
+            if (response.Count > 0)
+                return Ok(response[0].Site);
             else return NotFound("Nearby sites not found.");
         }
 
@@ -74,10 +69,9 @@ namespace IdentotyExample.Controllers
         [Route("GetRecommendedAddressByLongitudeAndLatitude")]
         public async Task<ActionResult> GetRecommendedAddressByLongitudeAndLatitude(double latitude, double longitude, OrderModeType orderMode = OrderModeType.Pickup, int offset = 0, int limit = 5, bool includeAllSites = false, string companyCode = "DLEC001")
         {
-            var response = await _client.GetNearbySitesByLatitudeAndLongitude(latitude, longitude, orderMode, offset, limit, includeAllSites, companyCode);
-            List<RootLL> root = JsonSerializer.Deserialize<List<RootLL>>(response);
-            if (root.Count > 0)
-                return Ok("Recommended address: "+root[0].Site.AddressLine1);
+            var response = await _client.GetNearbySitesByLatitudeAndLongitude(latitude, longitude, orderMode, companyCode, offset, limit, includeAllSites);
+            if (response.Count > 0)
+                return Ok("Recommended address: "+response[0].Site.AddressLine1);
             else return NotFound("Nearby sites not found.");
         }
 
@@ -85,19 +79,17 @@ namespace IdentotyExample.Controllers
         [Route("GetMenus")]
         public async Task<ActionResult> GetMenus(int siteId, DateTime promiseTime = new DateTime(), bool includeInvisible = false, OrderModeType orderMode = OrderModeType.Pickup)
         {
-            var response = await _client.GetMenus(siteId, promiseTime, includeInvisible, orderMode);
-            RootMenus root = JsonSerializer.Deserialize<RootMenus>(response);
-            return Ok(root);
+            var response = await _client.GetMenus(siteId, promiseTime, orderMode, includeInvisible);
+            return Ok(response);
         }
 
         [HttpGet]
         [Route("GetFirstMenuName")]
         public async Task<ActionResult> GetFirstMenuName(int siteId, DateTime promiseTime = new DateTime(), bool includeInvisible = false, OrderModeType orderMode = OrderModeType.Pickup)
         {
-            var response = await _client.GetMenus(siteId, promiseTime, includeInvisible, orderMode);
-            RootMenus root = JsonSerializer.Deserialize<RootMenus>(response);
-            if (root.Menus != null && root.Menus.Count > 0)
-                return Ok(root.Menus[0].Name);
+            var response = await _client.GetMenus(siteId, promiseTime, orderMode, includeInvisible);
+            if (response.Menus != null && response.Menus.Count > 0)
+                return Ok(response.Menus[0].Name);
             else return NotFound("Menus not found.");
         }
 
@@ -135,9 +127,6 @@ namespace IdentotyExample.Controllers
         public async Task<ActionResult> CreateOrder([FromBody] Order order, int siteId, bool verbose = false)
         {
             var response = await _client.CreateOrder(order,siteId,verbose);
-
-            //RootOrder root = JsonSerializer.Deserialize<RootOrder>(response); //nastavi 
-
             return Ok(response);
         }
 

@@ -124,5 +124,130 @@ namespace IdentotyExample.Enums
             FailedToSubmitOrder = 15,
             UnsupportedOrderMode = 16
         }
+
+        public enum OrderStatus
+        {
+            Invalid = 0,
+            Unordered = 1,
+            Validated = 2,
+            Submitted = 3,
+            PendingOperation = 4,
+            Deleted = 5,
+            CreditProcessed = 6,
+            SubmittedAndCanceled = 7,
+            SubmittedWithDepositFailure = 8,
+            Combined = 9,
+            Closed = 10
+        }
+
+        public enum OrderLineItemStatus
+        {
+            Normal = 0,
+            UnknownError = 1
+        }
+
+        public enum AlohaRewardType
+        {
+            Comp = 0,
+            Promo = 1,
+            Other = 2
+        }
+
+        public enum PaymentType
+        {
+            PayAtSite = 0,
+            CreditCard = 1,
+            GiftCard = 2,
+            SavedCreditCard = 3
+        }
+
+        public enum PaymentCardType
+        {
+            Unknown = 0,
+            Visa = 1,
+            Mastercard = 2,
+            Amex = 3,
+            Discover = 4,
+            DinersClub = 5,
+            JCB = 6,
+            Paypal = 7,
+            GlobalBlue = 8,
+            Worldpay = 9
+        }
+
+        public enum PaymentStatus
+        {
+            Pending = 0,
+            Applied = 1,
+            Cancelled = 2
+        }
+
+        public enum ProcessingType
+        {
+            CreditCard = 0,
+            Token = 1,
+            Braintree = 2,
+            FreedomPay = 3
+        }
+
+        public enum P2PEComboType
+        {
+            NonP2PETransaction = 0,
+            VoltageIPP350_VisaNet = 1,
+            TransArmorVX820_CES = 2,
+            VoltageIPP330_HeartLand = 3,
+            TransArmorVX820_WorldPay = 4,
+            VoltageIPP330_Vantiv = 5
+        }
+        
+        public enum ClientPlatformType
+        {
+            Unknown = 0,
+            DesktopWeb = 1,
+            MobileWeb = 2,
+            WindowsPhone = 3,
+            Ios = 4,
+            Android = 5,
+            ThirdParty = 6
+        }
+
+        public enum OrderDiscountType
+        {
+            AlohaLoyaltyComp = 0,
+            AlohaLoyaltyPromo = 1,
+            AlohaLoyaltyOther = 2,
+            None = 3,
+            Promo = 4,
+            Comp = 5,
+            Other = 6,
+            PesRewardDollars = 7,
+            PesRewardOffers = 8
+        }
+
+        public enum DiscountStatus
+        {
+            None = 0,
+            Accepted = 1,
+            Rejected = 2
+        }
+
+        public enum OrderDiscountSource
+        {
+            OnlineOrdering = 0,
+            AlohaLoyalty = 1
+        }
+
+        public enum PesStatus
+        {
+            ACTIVE = 0,
+            INACTIVE = 1
+        }
+
+        public enum PesProgramType
+        {
+            POINTS = 0,
+            STORED_VALUE = 1,
+            VISITS = 2
+        }
     }
 }
