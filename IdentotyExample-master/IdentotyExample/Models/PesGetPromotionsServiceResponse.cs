@@ -6,5 +6,7 @@
         public string loyaltyBarcode { get; set; }
         public PesConsumerResponseData consumer { get; set; }
         public List<PesNotificationData> notifications { get; set; }
+        List<PesItemLevelRewardData> itemLevelAppliedRewards { get; set; }
+
     }
 }

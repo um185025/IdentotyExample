@@ -1,4 +1,6 @@
 ﻿using AlohaAPIExample.Models;
+using AlohaAPIExample.Models.Dto;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text;
@@ -10,12 +12,10 @@ namespace IdentotyExample.Controllers
     public class AlohaController : Controller
     {
         private readonly AlohaAPIClient _client;
-        private string credentials;
 
         public AlohaController(AlohaAPIClient client)
         {
             _client = client;
-            
         }
 
         [HttpGet]
@@ -101,32 +101,32 @@ namespace IdentotyExample.Controllers
             return Ok(response);
         }
 
-        private Order CreateOrder()
-        {
-            OrderCustomer orderCustomer = new OrderCustomer();
-            orderCustomer.EMail = "urosmitrovi@gmail.com";
-            orderCustomer.FirstName = "Uros";
-            orderCustomer.LastName = "Mitrovic";
-            orderCustomer.id = "2";
-            Order order = new Order();
-            order.SiteId = 1;
-            order.Customer = orderCustomer;
-            order.Channel = "Unknown";
-            order.OrderMode = OrderModeType.Pickup;
-            order.PaymentMode = PaymentMode.PaymentDeferred;
-            order.PromiseDateTime = new DateTime(2023, 8, 31);
-            order.LineItems = new List<InOrderLineItem>
-            { new InOrderLineItem() { SalesItemId=40067, MenuItemId=30008} };
-            order.ComboItems = new List<ComboItem>();
-            order.Guests = new List<Guest>();
-            return order;
-        }
+        //private Order CreateOrder()
+        //{
+        //    OrderCustomer orderCustomer = new OrderCustomer();
+        //    orderCustomer.EMail = "urosmitrovi@gmail.com";
+        //    orderCustomer.FirstName = "Uros";
+        //    orderCustomer.LastName = "Mitrovic";
+        //    orderCustomer.id = "2";
+        //    Order order = new Order();
+        //    order.SiteId = 1;
+        //    order.Customer = orderCustomer;
+        //    order.Channel = "Unknown";
+        //    order.OrderMode = OrderModeType.Pickup;
+        //    order.PaymentMode = PaymentMode.PaymentDeferred;
+        //    order.PromiseDateTime = new DateTime(2023, 8, 31);
+        //    order.LineItems = new List<InOrderLineItem>
+        //    { new InOrderLineItem() { SalesItemId=40067, MenuItemId=30008} };
+        //    order.ComboItems = new List<ComboItem>();
+        //    order.Guests = new List<Guest>();
+        //    return order;
+        //}
 
         [HttpPut]
         [Route("CreateOrder")]
-        public async Task<ActionResult> CreateOrder([FromBody] Order order, int siteId, bool verbose = false)
+        public async Task<ActionResult> CreateOrder([FromBody] InOrderDTO inOrderDTO, int siteId, bool verbose = false)
         {
-            var response = await _client.CreateOrder(order,siteId,verbose);
+            var response = await _client.CreateOrder(inOrderDTO,siteId,verbose);
             return Ok(response);
         }
 

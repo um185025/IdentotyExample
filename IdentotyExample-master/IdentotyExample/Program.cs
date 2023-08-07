@@ -5,8 +5,14 @@ using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using AutoMapper;
+using AlohaAPIExample.Models.Dto;
+using AlohaAPIExample.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 
 // Add services to the container.
 string defaultConnectionString = "server=127.0.0.1; port=3306; database=testbaza; user=root; password=Sa21sa21sa21!; Persist Security Info=False; Connect Timeout=300";
