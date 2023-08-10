@@ -1,4 +1,5 @@
-﻿using AlohaAPIExample.Models.Dto;
+﻿using AlohaAPIExample.Models;
+using AlohaAPIExample.Models.Dto;
 using AutoMapper;
 
 namespace AlohaAPIExample.Mapping
@@ -14,6 +15,8 @@ namespace AlohaAPIExample.Mapping
             CreateMap<InOrderDTO, Order>()
                 .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.InOrderSiteId));
             CreateMap<NearbySite, OutNearbySiteDTO>();
+            CreateMap<InCustomerDTO, OrderCustomer>();
+            CreateMap<InInOrderLineItemDTO, InOrderLineItem>();
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using AlohaAPIExample.Models;
 using AlohaAPIExample.Models.Dto;
 using AutoMapper;
+using IdentotyExample.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -12,10 +14,12 @@ namespace IdentotyExample.Controllers
     public class AlohaController : Controller
     {
         private readonly AlohaAPIClient _client;
+        private readonly DataContext _context;
 
-        public AlohaController(AlohaAPIClient client)
+        public AlohaController(AlohaAPIClient client, DataContext context)
         {
             _client = client;
+            _context = context;
         }
 
         [HttpGet]
@@ -79,18 +83,9 @@ namespace IdentotyExample.Controllers
         [Route("GetMenus")]
         public async Task<ActionResult> GetMenus(int siteId, DateTime promiseTime = new DateTime(), bool includeInvisible = false, OrderModeType orderMode = OrderModeType.Pickup)
         {
-            var response = await _client.GetMenus(siteId, promiseTime, orderMode, includeInvisible);
+            List<MenuItemOverride> menuItemOverrideList = await _context.MenuItemOverrides.ToListAsync();
+            var response = await _client.GetMenus(menuItemOverrideList, siteId, promiseTime, orderMode, includeInvisible);
             return Ok(response);
-        }
-
-        [HttpGet]
-        [Route("GetFirstMenuName")]
-        public async Task<ActionResult> GetFirstMenuName(int siteId, DateTime promiseTime = new DateTime(), bool includeInvisible = false, OrderModeType orderMode = OrderModeType.Pickup)
-        {
-            var response = await _client.GetMenus(siteId, promiseTime, orderMode, includeInvisible);
-            if (response.Menus != null && response.Menus.Count > 0)
-                return Ok(response.Menus[0].Name);
-            else return NotFound("Menus not found.");
         }
 
         [HttpGet]

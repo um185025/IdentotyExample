@@ -6,6 +6,7 @@ namespace AlohaAPIExample.Models.Dto
     {
         public OrderResultCodes ResultCode { get; set; }
         public object Order { get; set; }
+        public int OrderId { get; set; }
         public object FailedItems { get; set; }
         public object FailedModifiers { get; set; }
         public object ErrorMessage { get; set; }

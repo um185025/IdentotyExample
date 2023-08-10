@@ -8,7 +8,7 @@ namespace AlohaAPIExample.Models.Dto
         //public int OrderId { get; set; }
         //public int DesignId { get; set; }
         public DateTime PromiseDateTime { get; set; }
-        public List<InOrderLineItem> LineItems { get; set; }
+        public List<InInOrderLineItemDTO> LineItems { get; set; }
         public List<ComboItem> ComboItems { get; set; }
         public OrderModeType OrderMode { get; set; }
         //public bool UpdateTimeDisabled { get; set; }
@@ -17,10 +17,10 @@ namespace AlohaAPIExample.Models.Dto
         //public DestinationType Destination { get; set; }
         //public bool ShouldManualRelease { get; set; }
         //public int TaxJurisdictionId { get; set; }
-        public OrderCustomer Customer { get; set; }
+        public InCustomerDTO Customer { get; set; }
         public CustomerAddress CustomerAddressForOrder { get; set; }
-        public string SpecialInstructions { get; set; }
-        public string LoyaltyNumber { get; set; }
+       // public string SpecialInstructions { get; set; }
+        //public string LoyaltyNumber { get; set; }
        // public int CompId { get; set; }
         //public List<InComp> Comps { get; set; }
         public List<Guest> Guests { get; set; }

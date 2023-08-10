@@ -17,14 +17,12 @@ namespace IdentotyExample.Controllers
 
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IConfiguration _configuration;
         private readonly DataContext _context;
 
-        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, DataContext context)
+        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, DataContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _configuration = configuration;
             _context = context;
         }
 
