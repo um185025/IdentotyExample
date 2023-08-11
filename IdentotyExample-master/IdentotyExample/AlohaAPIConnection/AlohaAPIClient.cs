@@ -71,16 +71,6 @@ public class AlohaAPIClient : IAlohaAPIClient
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
         RootMenus rootMenus = JsonSerializer.Deserialize<RootMenus>(serializedJson);
-        var allMenuItems = rootMenus.MenuItems;
-        foreach (MenuItemOverride menuItemOverride in menuItemOverrideList)
-        {
-            if (menuItemOverride.SiteId != siteId) continue;
-            var newMenuItem = allMenuItems.FirstOrDefault(menuitem => menuitem.MenuItemId == menuItemOverride.MenuItemId);
-            if (newMenuItem == null) continue;
-            if (menuItemOverride.Name != null) newMenuItem.Name = menuItemOverride.Name;
-            if (menuItemOverride.Description != null) newMenuItem.Description = menuItemOverride.Description;
-            if (menuItemOverride.ImageName != null) newMenuItem.BaseImageName = menuItemOverride.ImageName;
-        }
         OutRootMenusDTO result = _mapper.Map<OutRootMenusDTO>(rootMenus);
         return result;
     }

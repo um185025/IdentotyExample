@@ -1,4 +1,5 @@
-﻿using AlohaAPIExample.Models;
+﻿using AlohaAPIExample.Helpers;
+using AlohaAPIExample.Models;
 using AlohaAPIExample.Models.Dto;
 using AutoMapper;
 using IdentotyExample.Data;
@@ -85,7 +86,8 @@ namespace IdentotyExample.Controllers
         {
             List<MenuItemOverride> menuItemOverrideList = await _context.MenuItemOverrides.ToListAsync();
             var response = await _client.GetMenus(menuItemOverrideList, siteId, promiseTime, orderMode, includeInvisible);
-            return Ok(response);
+            OutRootMenusDTO modifiedMenus = MenuHelper.GetModifiedMenu(siteId, menuItemOverrideList, response);
+            return Ok(modifiedMenus);
         }
 
         [HttpGet]

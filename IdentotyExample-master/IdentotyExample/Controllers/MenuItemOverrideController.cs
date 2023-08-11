@@ -33,7 +33,7 @@ namespace AlohaAPIExample.Controllers
         [Route("AddOrUpdateMenuItemOverride")]
         public async Task<ActionResult> AddOrUpdateMenuItemOverride(MenuItemOverride menuItemOverride)
         {
-            var itemFromDb = await _context.MenuItemOverrides.FirstOrDefaultAsync(tableItem => tableItem.MenuId == menuItemOverride.MenuId && tableItem.SiteId == menuItemOverride.SiteId && tableItem.MenuItemId == menuItemOverride.MenuItemId);
+            var itemFromDb = await _context.MenuItemOverrides.FindAsync(menuItemOverride.SiteId, menuItemOverride.MenuId, menuItemOverride.MenuItemId);
 
             List<MenuItemOverride> menuItemOverrideList = await _context.MenuItemOverrides.ToListAsync();
             OrderModeType anyOrderModeType = OrderModeType.Pickup | OrderModeType.DriveThru | OrderModeType.Delivery | OrderModeType.CurbSide | OrderModeType.WalkIn | OrderModeType.DineIn | OrderModeType.SVCDeposit | OrderModeType.Undefined;
@@ -51,7 +51,6 @@ namespace AlohaAPIExample.Controllers
                     if (newSubMenu == null) continue;
                     var menuItemsInt = newSubMenu.MenuItems.ToList();
                     var allMenuItems = menus.MenuItems;
-                    var subMenuMenuItems = new List<MenuItem>();
                     foreach (int menuItemId in menuItemsInt)
                     {
                         var newMenuItem = allMenuItems.FirstOrDefault(menuitem => menuitem.MenuItemId == menuItemId);
@@ -84,7 +83,7 @@ namespace AlohaAPIExample.Controllers
         [Route("DeleteMenuItemOverride")]
         public async Task<ActionResult> DeleteMenuItemOverride(MenuItemOverride menuItemOverride)
         {
-            var itemFromDb = await _context.MenuItemOverrides.FirstOrDefaultAsync(tableItem => tableItem.MenuId == menuItemOverride.MenuId && tableItem.SiteId == menuItemOverride.SiteId && tableItem.MenuItemId == menuItemOverride.MenuItemId);
+            var itemFromDb = await _context.MenuItemOverrides.FindAsync(menuItemOverride.SiteId, menuItemOverride.MenuId, menuItemOverride.MenuItemId);
             if (itemFromDb != null)
             {
                 _context.MenuItemOverrides.Remove(itemFromDb);
