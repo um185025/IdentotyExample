@@ -17,7 +17,7 @@ public class AlohaAPIClient : IAlohaAPIClient
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<AlohaAPIClient> _logger;
     private readonly IMapper _mapper;
-    
+
 
     public AlohaAPIClient(IHttpClientFactory httpClientFactory, ILogger<AlohaAPIClient> logger, IMapper mapper)
     {
@@ -71,31 +71,15 @@ public class AlohaAPIClient : IAlohaAPIClient
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
         RootMenus rootMenus = JsonSerializer.Deserialize<RootMenus>(serializedJson);
+        var allMenuItems = rootMenus.MenuItems;
         foreach (MenuItemOverride menuItemOverride in menuItemOverrideList)
         {
-            if (rootMenus == null) break;
             if (menuItemOverride.SiteId != siteId) continue;
-            var foundMenu = rootMenus.Menus.FirstOrDefault(menu => menu.MenuId == menuItemOverride.MenuId);
-            if(foundMenu == null) continue;
-            var subMenusInt = foundMenu.SubMenus.ToList();
-            var allSubMenus = rootMenus.SubMenus;
-            var allMenuItems = rootMenus.MenuItems;
-
-            foreach (int subMenuId in subMenusInt)
-            {
-                var newSubMenu = allSubMenus.FirstOrDefault(submenu => submenu.SubMenuId == subMenuId);
-                if(newSubMenu == null) continue;
-                var menuItemsInt = newSubMenu.MenuItems.ToList();
-                
-                foreach(int menuItemId in menuItemsInt)
-                {
-                    var newMenuItem = allMenuItems.FirstOrDefault(menuitem => menuitem.MenuItemId == menuItemId);
-                    if(newMenuItem == null || newMenuItem.MenuItemId != menuItemOverride.MenuItemId) continue;
-                    if (menuItemOverride.Name != null) newMenuItem.Name = menuItemOverride.Name;
-                    if (menuItemOverride.Description != null) newMenuItem.Description = menuItemOverride.Description;
-                    if (menuItemOverride.ImageName != null) newMenuItem.BaseImageName = menuItemOverride.ImageName;
-                }
-            }            
+            var newMenuItem = allMenuItems.FirstOrDefault(menuitem => menuitem.MenuItemId == menuItemOverride.MenuItemId);
+            if (newMenuItem == null) continue;
+            if (menuItemOverride.Name != null) newMenuItem.Name = menuItemOverride.Name;
+            if (menuItemOverride.Description != null) newMenuItem.Description = menuItemOverride.Description;
+            if (menuItemOverride.ImageName != null) newMenuItem.BaseImageName = menuItemOverride.ImageName;
         }
         OutRootMenusDTO result = _mapper.Map<OutRootMenusDTO>(rootMenus);
         return result;
