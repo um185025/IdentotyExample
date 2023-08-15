@@ -8,10 +8,18 @@ using System.Text;
 using AutoMapper;
 using AlohaAPIExample.Models.Dto;
 using AlohaAPIExample.Mapping;
+using AlohaAPIExample.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.AddSingleton<ISocketCommunicationHelper>(provider =>
+{
+    string serverIp = "127.0.0.1";
+    int port = 5000;
+    return new SocketCommunicationHelper(serverIp, port);
+});
 
 
 // Add services to the container.

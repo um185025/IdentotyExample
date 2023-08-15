@@ -1,4 +1,5 @@
 ﻿using AlohaAPIExample.AlohaAPIConnection;
+using AlohaAPIExample.Helpers;
 using AlohaAPIExample.Models;
 using AlohaAPIExample.Models.Dto;
 using AutoMapper;
@@ -17,13 +18,15 @@ public class AlohaAPIClient : IAlohaAPIClient
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<AlohaAPIClient> _logger;
     private readonly IMapper _mapper;
+    private readonly ISocketCommunicationHelper _socketCommunicationHelper;
 
 
-    public AlohaAPIClient(IHttpClientFactory httpClientFactory, ILogger<AlohaAPIClient> logger, IMapper mapper)
+    public AlohaAPIClient(IHttpClientFactory httpClientFactory, ILogger<AlohaAPIClient> logger, IMapper mapper, ISocketCommunicationHelper socketCommunicationHelper)
     {
         _httpClientFactory = httpClientFactory;
         _logger = logger;
         _mapper = mapper;
+        _socketCommunicationHelper = socketCommunicationHelper;
     }
 
     private HttpClient HttpClient { get => _httpClientFactory.CreateClient("AlohaAPIClient"); }
@@ -33,7 +36,9 @@ public class AlohaAPIClient : IAlohaAPIClient
     {
         string url = $"v1/NearbySites/{searchTerm}?getNearbySitesForFirstGeocodeResult={getNearbySitesForFirstGeocodeResult}&includeAllSites={includeAllSites}&offset={offset}&limit={limit}";
 
+        _socketCommunicationHelper.SendMessage("Aloha GET: "+url);
         using HttpResponseMessage response = await HttpClient.GetAsync(url);
+        _socketCommunicationHelper.SendMessage("Aloha Response: " + response.StatusCode);
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
         Root root = JsonSerializer.Deserialize<Root>(serializedJson);
@@ -50,8 +55,9 @@ public class AlohaAPIClient : IAlohaAPIClient
         if (companyCode != null)
             urlBuilder.Append($"&companyCode={companyCode}");
         string url = urlBuilder.ToString();
-
+        _socketCommunicationHelper.SendMessage("Aloha GET: " + url);
         using HttpResponseMessage response = await HttpClient.GetAsync(url);
+        _socketCommunicationHelper.SendMessage("Aloha Response: " + response.StatusCode);
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
         List<RootLL> rootLLs = JsonSerializer.Deserialize<List<RootLL>>(serializedJson);
@@ -67,7 +73,10 @@ public class AlohaAPIClient : IAlohaAPIClient
         if (promiseTime != null)
             urlBuilder.Append($"&promiseTime={promiseTime}");
         string url = urlBuilder.ToString();
+
+        _socketCommunicationHelper.SendMessage("Aloha GET: " + url);
         using HttpResponseMessage response = await HttpClient.GetAsync(url);
+        _socketCommunicationHelper.SendMessage("Aloha Response: " + response.StatusCode);
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
         RootMenus rootMenus = JsonSerializer.Deserialize<RootMenus>(serializedJson);
@@ -78,7 +87,9 @@ public class AlohaAPIClient : IAlohaAPIClient
     public async Task<DateTime> GetTime(int siteId, OrderModeType orderMode, bool noCache = false)
     {
         string url = $"v1/Times/{siteId}/{orderMode}?noCache={noCache}";
+        _socketCommunicationHelper.SendMessage("Aloha GET: " + url);
         using HttpResponseMessage response = await HttpClient.GetAsync(url);
+        _socketCommunicationHelper.SendMessage("Aloha Response: " + response.StatusCode);
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
         DateTime.TryParse(serializedJson, out DateTime dateTime);
@@ -92,7 +103,9 @@ public class AlohaAPIClient : IAlohaAPIClient
         string orderString = JsonSerializer.Serialize(order);
         string body = JsonSerializer.Serialize(order);
         HttpContent content = new StringContent(body, Encoding.UTF8, "application/json");
+        _socketCommunicationHelper.SendMessage("Aloha PUT: " + url);
         using HttpResponseMessage response = await HttpClient.PutAsync(url, content);
+        _socketCommunicationHelper.SendMessage("Aloha Response: " + response.StatusCode);
         var resp = response.Content.ReadAsStringAsync();
         string serializedJson = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
