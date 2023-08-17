@@ -9,6 +9,8 @@ using AutoMapper;
 using AlohaAPIExample.Models.Dto;
 using AlohaAPIExample.Mapping;
 using AlohaAPIExample.Helpers;
+using Microsoft.AspNetCore.Mvc.Filters;
+using IdentotyExample.ActionFilter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,11 @@ builder.Services.AddSingleton<ISocketCommunicationHelper>(provider =>
     string serverIp = "127.0.0.1";
     int port = 5000;
     return new SocketCommunicationHelper(serverIp, port);
+});
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ActionFilter>();
 });
 
 

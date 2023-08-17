@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static IdentotyExample.Enums.Enums;
 using AlohaAPIExample.Helpers;
+using System.Diagnostics;
 
 namespace AlohaAPIExample.Controllers
 {
@@ -15,13 +16,11 @@ namespace AlohaAPIExample.Controllers
 
         private readonly DataContext _context;
         private readonly AlohaAPIClient _client;
-        private readonly ISocketCommunicationHelper _socketCommunicationHelper;
 
-        public MenuItemOverrideController(DataContext context, AlohaAPIClient client, ISocketCommunicationHelper socketCommunicationHelper)
+        public MenuItemOverrideController(DataContext context, AlohaAPIClient client)
         {
             _context = context;
             _client = client;
-            _socketCommunicationHelper = socketCommunicationHelper;
         }
 
 
@@ -31,14 +30,11 @@ namespace AlohaAPIExample.Controllers
         {
             try
             {
-                _socketCommunicationHelper.SendMessage("GET: GetMenuItemsOverride");
                 var response = await _context.MenuItemOverrides.ToListAsync();
-                _socketCommunicationHelper.SendMessage("Response: 200 OK");
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _socketCommunicationHelper.SendMessage($"Response: 500 Internal Server Error ({ex.Message})");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -49,9 +45,8 @@ namespace AlohaAPIExample.Controllers
         {
             try
             {
-                _socketCommunicationHelper.SendMessage("POST: AddOrUpdateMenuItemOverride");
                 var itemFromDb = await _context.MenuItemOverrides.FindAsync(menuItemOverride.SiteId, menuItemOverride.MenuId, menuItemOverride.MenuItemId);
-
+                
                 List<MenuItemOverride> menuItemOverrideList = await _context.MenuItemOverrides.ToListAsync();
                 OrderModeType anyOrderModeType = OrderModeType.Pickup | OrderModeType.DriveThru | OrderModeType.Delivery | OrderModeType.CurbSide | OrderModeType.WalkIn | OrderModeType.DineIn | OrderModeType.SVCDeposit | OrderModeType.Undefined;
                 var menus = await _client.GetMenus(menuItemOverrideList, menuItemOverride.SiteId, new DateTime(), anyOrderModeType, false);
@@ -80,7 +75,6 @@ namespace AlohaAPIExample.Controllers
                     if (foundInAloha) break;
                 }
                 if (!foundInAloha) {
-                    _socketCommunicationHelper.SendMessage($"Response: 404 Not Found");
                     return NotFound("Please provide valid values for SiteId, MenuId, and MenuItemId."); }
 
                 if (itemFromDb == null)
@@ -95,12 +89,10 @@ namespace AlohaAPIExample.Controllers
                     _context.MenuItemOverrides.Update(itemFromDb);
                 }
                 await _context.SaveChangesAsync();
-                _socketCommunicationHelper.SendMessage("Response: 200 OK");
                 return Ok(menuItemOverride);
             }
             catch (Exception ex)
             {
-                _socketCommunicationHelper.SendMessage($"Response: 500 Internal Server Error ({ex.Message})");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -111,21 +103,17 @@ namespace AlohaAPIExample.Controllers
         {
             try
             {
-                _socketCommunicationHelper.SendMessage("DELETE: DeleteMenuItemOverride");
                 var itemFromDb = await _context.MenuItemOverrides.FindAsync(menuItemOverride.SiteId, menuItemOverride.MenuId, menuItemOverride.MenuItemId);
                 if (itemFromDb != null)
                 {
                     _context.MenuItemOverrides.Remove(itemFromDb);
                     await _context.SaveChangesAsync();
-                    _socketCommunicationHelper.SendMessage("Response: 200 OK");
                     return Ok("Deleted");
                 }
-                _socketCommunicationHelper.SendMessage("Response: 404 Not Found");
                 return NotFound();
             }
             catch(Exception ex)
             {
-                _socketCommunicationHelper.SendMessage($"Response: 500 Internal Server Error ({ex.Message})");
                 return StatusCode(500, ex.Message);
             }
         }

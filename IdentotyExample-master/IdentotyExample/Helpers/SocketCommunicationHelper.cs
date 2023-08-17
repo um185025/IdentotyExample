@@ -5,8 +5,8 @@ namespace AlohaAPIExample.Helpers
 {
     public class SocketCommunicationHelper : ISocketCommunicationHelper
     {
-        private string serverIp;
-        private int port;
+        private readonly string serverIp;
+        private readonly int port;
         private TcpClient client;
 
         public SocketCommunicationHelper(string serverIp, int port)
@@ -21,7 +21,7 @@ namespace AlohaAPIExample.Helpers
             {
                 client = new TcpClient();
                 client.Connect(serverIp, port);
-                NetworkStream stream = client.GetStream();
+                using NetworkStream stream = client.GetStream();
                 byte[] messageBytes = Encoding.ASCII.GetBytes(message);
                 stream.Write(messageBytes, 0, messageBytes.Length);
                 stream.Close();
